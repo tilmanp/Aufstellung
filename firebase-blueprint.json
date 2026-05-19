@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "vote": {
+      "title": "Vote",
+      "description": "A user's submission for the Team of the Season",
+      "type": "object",
+      "properties": {
+        "lineup": {
+          "type": "object",
+          "description": "Map of slot indices to player IDs"
+        },
+        "coachId": {
+          "type": "string",
+          "description": "ID of the selected coach"
+        },
+        "voterIp": {
+          "type": "string",
+          "description": "IP address of the voter"
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID of the user who voted"
+        },
+        "voterName": {
+          "type": "string",
+          "description": "Display name of the voter"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of when the vote was cast"
+        }
+      },
+      "required": ["lineup", "coachId", "userId", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/votes/{voteId}": {
+      "schema": "vote",
+      "description": "Collection of user votes"
+    }
+  }
+}

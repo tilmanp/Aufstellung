@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    function existing() {
+      return resource.data;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Votes collection
+    match /votes/{voteId} {
+      allow read: if true;
+      
+      allow create: if isValidVote(incoming())
+                    && incoming().createdAt == request.time;
+                    
+      // No updates or deletes allowed for anonymous votes for integrity,
+      // or we could allow update if we tracked session, but user wants simplicity.
+      allow update, delete: if false;
+    }
+
+    function isValidVote(data) {
+      return data.keys().hasAll(['lineup', 'coachId', 'createdAt'])
+             && data.lineup is map
+             // Simple size check for lineup - we expect 11 slots
+             && data.lineup.keys().size() == 11
+             && data.coachId is string
+             && data.coachId.size() <= 50
+             && (!data.get('voterIp', null) || (data.voterIp is string && data.voterIp.size() <= 64))
+             && (data.get('voterName', '') is string && data.get('voterName', '').size() <= 100);
+    }
+  }
+}

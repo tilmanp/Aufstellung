@@ -1,0 +1,6 @@
+{
+  "name": "Eleven Master",
+  "description": "Erstelle deine persönliche Fussballmannschaft mit Drag-and-Drop. Wähle Formationen, Spieler und einen Trainer auf einem minimalistischen Spielfeld.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
